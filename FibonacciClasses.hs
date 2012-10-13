@@ -1,3 +1,7 @@
+module FibonacciClasses where
+
+fibonacci :: Int -> Int
+
 main = do
     putStrLn $ fibonacci 0
     putStrLn $ fibonacci 1
