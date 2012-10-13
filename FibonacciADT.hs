@@ -1,4 +1,4 @@
-module FibonacciClasses where
+module FibonacciADT where
 
 data Nat = Zero
          | Suc Nat
@@ -12,9 +12,8 @@ add _       n = n
 
 {- The bad recursive way -}
 fib :: Nat -> Nat
-fib Zero            = Zero
-fib (Suc Zero)      = (Suc Zero)
 fib (Suc m@(Suc n)) = add (fib m) (fib n)
+fib x               = x
 
 {- Iterative way to calculate fibonacci numbers -}
 fib' :: Nat -> Nat
@@ -25,27 +24,27 @@ fib'Iter _ _ z Zero    = z
 fib'Iter x y z (Suc n) = fib'Iter (add x y) x y n
 
 {- Converting integers into Nats -}
-intToFib :: Int -> Nat
-intToFib = foldIntToFib Suc Zero
+intToNat :: Int -> Nat
+intToNat = foldIntToNat Suc Zero
 
-foldIntToFib :: (Nat -> Nat) -> Nat -> Int -> Nat
-foldIntToFib _ x 0 = x
-foldIntToFib f x n = foldIntToFib f (f x) (n-1)
+foldIntToNat :: (Nat -> Nat) -> Nat -> Int -> Nat
+foldIntToNat _ x 0 = x
+foldIntToNat f x n = foldIntToNat f (f x) (n-1)
 
 {- Converting Nats into integers -}
-fibToInt :: Nat -> Int
-fibToInt = foldFibToInt (+1) 0
+natToInt :: Nat -> Int
+natToInt = foldNatToInt (+1) 0
 
-foldFibToInt :: (Int -> Int) -> Int -> Nat -> Int
-foldFibToInt _ x Zero    = x
-foldFibToInt f x (Suc s) = foldFibToInt f (f x) s
+foldNatToInt :: (Int -> Int) -> Int -> Nat -> Int
+foldNatToInt _ x Zero    = x
+foldNatToInt f x (Suc s) = foldNatToInt f (f x) s
 
 {- Displaying the results -}
 fibString :: Int -> String
-fibString = show . fibToInt . fib . intToFib
+fibString = show . natToInt . fib . intToNat
 
 fib'String :: Int -> String
-fib'String = show .fibToInt . fib' . intToFib
+fib'String = show . natToInt . fib' . intToNat
 
 main = do
     mapM_ (putStrLn . fibString) [0..25]
