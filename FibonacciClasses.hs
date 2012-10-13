@@ -1,14 +1,34 @@
 module FibonacciClasses where
 
-fibonacci :: Int -> Int
-fibonacci n
-    | n <= 1    = n
-    | otherwise = fibonacci (n-1) + fibonacci (n-2)
+data Nat = Zero
+            | Suc Nat
+            deriving (Show)
+
+add :: Nat -> Nat -> Nat
+add Zero n    = n
+add (Suc m) n = add m (Suc n)
+
+fibonacci :: Nat -> Nat
+fibonacci Zero            = Zero
+fibonacci (Suc Zero)      = (Suc Zero)
+fibonacci (Suc m@(Suc n)) = add (fibonacci m) (fibonacci n)
+
+intToFib :: Int -> Nat
+intToFib n = foldIntToFib Suc Zero n
+
+foldIntToFib :: (Nat -> Nat) -> Nat -> Int -> Nat
+foldIntToFib _ x 0 = x
+foldIntToFib f x n = foldIntToFib f (f x) (n-1)
+
+fibToInt :: Nat -> Int
+fibToInt n = foldFibToInt (+1) 0 n
+
+foldFibToInt :: (Int -> Int) -> Int -> Nat -> Int
+foldFibToInt _ x Zero    = x
+foldFibToInt f x (Suc s) = foldFibToInt f (f x) s
+
+fibString :: Int -> String
+fibString = show . fibToInt . fibonacci . intToFib
 
 main = do
-    putStrLn $ show $ fibonacci 0
-    putStrLn $ show $ fibonacci 1
-    putStrLn $ show $ fibonacci 2
-    putStrLn $ show $ fibonacci 3
-    putStrLn $ show $ fibonacci 4
-    putStrLn $ show $ fibonacci 5
+    mapM_ (putStrLn . fibString) [0..40]
